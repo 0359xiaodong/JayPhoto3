@@ -36,17 +36,16 @@ public final class R {
         public static final int editText3=0x7f08000b;
         public static final int imageButton1=0x7f080009;
         public static final int imageView1=0x7f080005;
-        public static final int textView1=0x7f080003;
-        public static final int textView2=0x7f080004;
-        public static final int textView3=0x7f080006;
-        public static final int textView4=0x7f080007;
+        public static final int tvContent=0x7f080007;
+        public static final int tvTitle=0x7f080006;
+        public static final int tvWriteDate=0x7f080004;
+        public static final int tvWriter=0x7f080003;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int activity_viewer=0x7f030001;
-        public static final int activity_write=0x7f030002;
-        public static final int activity_writer=0x7f030003;
-        public static final int custom_list_row=0x7f030004;
+        public static final int activity_writer=0x7f030002;
+        public static final int custom_list_row=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f070000;

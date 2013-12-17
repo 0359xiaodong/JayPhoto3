@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 public class MainActivity extends Activity implements OnClickListener, OnItemClickListener{
 
+	private ArrayList<Article> articleList;
 	private ArrayList<ListData> listDataArray = new ArrayList<ListData>();
 	
 	private Button button1;
@@ -28,11 +29,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);		//맞나???p.91 
 		
-		Dao dao = new Dao(getApplicationContext());
 		
-		String testJsonData = dao.getJsonTestData();
-		
-		dao.insertJsonData(testJsonData);
 		
 		ListData data1 = new ListData("햄토리", "당근이 주식이다.", "1.png");
 		listDataArray.add(data1);
@@ -55,22 +52,41 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 		
 		button1.setOnClickListener(this);
 		button2.setOnClickListener(this);
+	
 		
 		
 		
 		ListView listView = (ListView)findViewById(R.id.custom_list_listView);
-		CustomAdapter customAdapter = new CustomAdapter(this, R.layout.custom_list_row, listDataArray);
-		listView.setAdapter(customAdapter);
 		
+		
+		//DB에 JSON데이터를 저장 
+		Dao dao = new Dao(getApplicationContext());
+		String testJsonData = dao.getJsonTestData();
+		dao.insertJsonData(testJsonData);
+		
+		//DB에 게시글 리스트를 받아옴 
+		articleList = dao.getArticleList();
+		
+		//CustomAdapter를 적용함
+//		CustomAdapter customAdapter = new CustomAdapter(this, R.layout.custom_list_row, listDataArray);
+		CustomAdapter2 customAdapter2 = new CustomAdapter2(this, R.layout.custom_list_row, articleList);
+		listView.setAdapter(customAdapter2);
 		listView.setOnItemClickListener(this);
+
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		Log.i("TEST", position + "번 리스트 선택됨");
-		Log.i("TEST", "리스트 내용: " + listDataArray.get(position).getText1());
+//		Log.i("TEST", position + "번 리스트 선택됨");
+//		Log.i("TEST", "리스트 내용: " + listDataArray.get(position).getText1());
+		Intent intent = new Intent(this, Viewer.class);
+		
+		intent.putExtra("ArticleNumber", articleList.get(position).getArticleNumber() + "");
+		
+		startActivity(intent);
 		
 		
+
 	}
 
 	@Override

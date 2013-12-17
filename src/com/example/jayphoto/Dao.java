@@ -1,10 +1,13 @@
 package com.example.jayphoto;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -25,7 +28,7 @@ public class Dao {
 					+ "                                       Title text not null,"
 					+ "                                       WriterName text not null,"
 					+ "                                       WriterId text not null,"
-					+ "                                       Context text not null,"
+					+ "                                       Content text not null,"
 					+ "                                       WriteDate text not null,"
 					+ "                                       ImgName text UNIQUE not null);";
 			database.execSQL(sql);
@@ -61,12 +64,89 @@ public class Dao {
 				imgName = jObj.getString("ImgName");
 				
 				Log.i("test", "ArticleNumber: " + articleNumber + "Title: " + title);
-			}
+				
+				//DB에 데이터 넣기
+				
+				//
+				String sql = "INSERT INTO Articles(ArticleNumber, Title, WriterName, WriterId, Content, WriteDate, ImgName)"
+						+ " VALUES(" + articleNumber + ", '" + title + "', '" + writer + "', '" + id
+						+ "', '" + content + "', '" + writeDate + "', '" + imgName + "');"; //콜론 주의
+				
+				Log.i("daosql",sql);
+				
+				try {
+					database.execSQL(sql);
+				} catch (Exception e) {
+					Log.e("test", "DB ERROR! - " + e);
+					e.printStackTrace();
+				}
+ 			}
 		} catch (JSONException e) {
 			Log.e("test", "JSON ERROR! - " + e);
 			e.printStackTrace();
 		}
 		
+	}
+	
+	//DB의 내용을 꺼내서 ArrayList<Article>형태로 반환 
+	public ArrayList<Article> getArticleList() {
+		ArrayList<Article> articleList = new ArrayList<Article>();
+		int articleNumber;
+		String title;
+		String writer;
+		String id;
+		String content;
+		String writeDate;
+		String imgName;
+		
+		//데이터 선택 
+		String sql = "SELECT * FROM Articles;";
+		Cursor cursor = database.rawQuery(sql, null);
+		
+		while(cursor.moveToNext()) {
+			articleNumber = cursor.getInt(1);
+			title = cursor.getString(2);
+			writer = cursor.getString(3);
+			id = cursor.getString(4);
+			content = cursor.getString(5);
+			writeDate = cursor.getString(6);
+			imgName = cursor.getString(7);
+			
+			articleList.add(new Article(articleNumber, title, writer, id, content, writeDate, imgName));
+		}
+		cursor.close();
+		
+		return articleList;
+	}
+	
+	public Article getArticleByArticleNumber(int articleNumber) {
+		Article article = null;
+		
+		String title;
+		String writer;
+		String id;
+		String content;
+		String writeDate;
+		String imgName;
+		
+		//데이터 선택 
+		String sql = "SELECT * FROM Articles WHERE ArticleNumber = " + articleNumber + ";";
+		Cursor cursor = database.rawQuery(sql, null);
+		
+		cursor.moveToNext();
+		articleNumber = cursor.getInt(1);
+		title = cursor.getString(2);
+		writer = cursor.getString(3);
+		id = cursor.getString(4);
+		content = cursor.getString(5);
+		writeDate = cursor.getString(6);
+		imgName = cursor.getString(7);
+			
+		article = new Article(articleNumber, title, writer, id, content, writeDate, imgName);
+		
+		cursor.close();
+		
+		return article;
 	}
 	
 	
